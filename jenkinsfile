@@ -1,0 +1,45 @@
+pipeline{
+ agent any
+	tools{
+		maven 'M3.6'
+	}
+ stages{
+    stage('Checkout'){ 
+	    steps{
+		  git 'https://github.com/madhukar9889/petclinic.git'
+		}
+    }
+		stage('Build') {
+			steps{
+			 M3_HOME = tool 'M3.6'
+				sh "$M3_HOME/bin/mvn clean package"
+		}
+	}
+	stage('Archival') {
+			steps{
+			archiveArtifacts artifacts: 'target/*.?ar', followSymlinks: false
+		}
+	}
+		stage('Unit Tests'){
+			steps{
+			 junit 'target/surefire-reports/*.xml'
+			}
+	    }
+	}		
+		post{
+			success{
+				notify('success')
+		    }
+			failure{
+				notify('failed')
+			}
+		}
+    }
+
+def notify(status) {
+	emailext (
+		to:'madhukarchalluri505@gmail.com',
+		subject: "${status} - ${env.JOB_NAME}",
+		body: "$status - Jenkins job ${env.BUILD_URL}"
+	)
+}
