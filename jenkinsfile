@@ -20,9 +20,9 @@ pipeline{
 			archiveArtifacts artifacts: 'target/*.?ar', followSymlinks: false
 		}
 	}
-		stage('Unit Tests'){
+		stage('Nexus uploader'){
 			steps{
-			 junit 'target/surefire-reports/*.xml'
+			 junit 'nexusArtifactUploader artifacts: [[artifactId: 'spring-petclinic', classifier: '', file: 'target/petclinic.war', type: 'war']], credentialsId: 'nexuscred1', groupId: 'org.springframework.samples', nexusUrl: '3.128.27.29:8081/nexus', nexusVersion: 'nexus2', protocol: 'http', repository: 'snapshots', version: '4.2.6-SNAPSHOT''
 			}
 	    }
 	}		
